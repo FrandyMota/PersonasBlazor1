@@ -28,5 +28,6 @@ namespace PersonasBlazor1.Models
 
         [Required(ErrorMessage = "Es obligatorio introducir una fecha")]
         public DateTime FechaNacimiento { get; set; }
+        public double Balance { get;  set; }
     }
 }

@@ -9,52 +9,43 @@ using System.Threading.Tasks;
 
 namespace PersonasBlazor1.BLL
 {
-    public class PersonasBLL
+    public class PrestamosBLL
     {
-        public static bool Guardar(Personas persona)
+        public static bool Guardar(Prestamos prestamo)
         {
-            if (!Existe(persona.PersonaId))
-                return Insertar(persona);
+
+            if (!Existe(prestamo.PrestamoId))
+                return Insertar(prestamo);
+
             else
-                return Modificar(persona);
+
+                return Modificar(prestamo);
         }
 
-        private static bool Insertar(Personas persona)
+
+
+        private static bool Insertar(Prestamos prestamo)
         {
+
             bool paso = false;
             Contexto contexto = new Contexto();
+            Personas persona = PersonasBLL.Buscar(prestamo.PersonaId);
 
             try
             {
-                contexto.Personas.Add(persona);
-                paso = contexto.SaveChanges() > 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                contexto.Dispose();
-            }
-
-            return paso;
-        }
-
-        private static bool Modificar(Personas persona)
-        {
-            bool paso = false;
-            Contexto contexto = new Contexto();
-
-            try
-            {
+                prestamo.Balance += prestamo.Monto;
+                persona.Balance += prestamo.Monto;
                 contexto.Entry(persona).State = EntityState.Modified;
+
+                contexto.Prestamos.Add(prestamo);
                 paso = contexto.SaveChanges() > 0;
             }
+
             catch (Exception)
             {
                 throw;
             }
+
             finally
             {
                 contexto.Dispose();
@@ -62,26 +53,82 @@ namespace PersonasBlazor1.BLL
 
             return paso;
         }
+
+
+
+        public static bool Modificar(Prestamos prestamoActual)
+        {
+
+            bool paso = false;
+            double auxiliar = 0;
+            Contexto contexto = new Contexto();
+
+            try
+            {
+                Personas persona = PersonasBLL.Buscar(prestamoActual.PersonaId);
+                Prestamos prestamoAnterior = PrestamosBLL.Buscar(prestamoActual.PrestamoId);
+                prestamoActual.Balance = prestamoActual.Monto;
+
+                if (prestamoActual.Monto > prestamoAnterior.Monto)
+                {
+                    auxiliar = prestamoActual.Monto - prestamoAnterior.Monto;
+                    persona.Balance += auxiliar;
+                }
+
+                else
+                {
+                    auxiliar = prestamoAnterior.Monto - prestamoActual.Monto;
+                    persona.Balance -= auxiliar;
+                }
+
+                contexto.Entry(persona).State = EntityState.Modified;
+                contexto.Entry(prestamoActual).State = EntityState.Modified;
+                paso = contexto.SaveChanges() > 0;
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+            finally
+            {
+                contexto.Dispose();
+            }
+
+            return paso;
+
+        }
+
+
 
         public static bool Eliminar(int id)
         {
+
             bool paso = false;
+
             Contexto contexto = new Contexto();
 
             try
             {
-                var persona = contexto.Personas.Find(id);
 
-                if (persona != null)
+                var prestamo = contexto.Prestamos.Find(id);
+
+                if (prestamo != null)
                 {
-                    contexto.Personas.Remove(persona);
+                    Personas persona = PersonasBLL.Buscar(prestamo.PersonaId);
+                    persona.Balance -= prestamo.Monto;
+                    contexto.Entry(persona).State = EntityState.Modified;
+                    contexto.Prestamos.Remove(prestamo);
                     paso = contexto.SaveChanges() > 0;
                 }
             }
+
             catch (Exception)
             {
                 throw;
             }
+
             finally
             {
                 contexto.Dispose();
@@ -90,40 +137,48 @@ namespace PersonasBlazor1.BLL
             return paso;
         }
 
-        public static Personas Buscar(int id)
+
+
+        public static Prestamos Buscar(int id)
         {
+
+            Prestamos prestamo;
             Contexto contexto = new Contexto();
-            Personas persona;
 
             try
             {
-                persona = contexto.Personas.Find(id);
+                prestamo = contexto.Prestamos.Find(id);
             }
+
             catch (Exception)
             {
                 throw;
             }
+
             finally
             {
                 contexto.Dispose();
             }
-
-            return persona;
+            return prestamo;
         }
 
-        public static List<Personas> GetList(Expression<Func<Personas, bool>> persona)
+
+        public static List<Prestamos> GetList(Expression<Func<Prestamos, bool>> prestamo)
         {
+
+            List<Prestamos> Lista = new List<Prestamos>();
             Contexto contexto = new Contexto();
-            List<Personas> Lista = new List<Personas>();
 
             try
             {
-                Lista = contexto.Personas.Where(persona).ToList();
+                Lista = contexto.Prestamos.Where(prestamo).ToList();
             }
+
             catch (Exception)
             {
                 throw;
             }
+
             finally
             {
                 contexto.Dispose();
@@ -132,24 +187,27 @@ namespace PersonasBlazor1.BLL
             return Lista;
         }
 
-        public static List<Personas> GetList()
+
+
+        public static List<Prestamos> GetList()
         {
-            List<Personas> Lista = new List<Personas>();
+            List<Prestamos> Lista = new List<Prestamos>();
             Contexto contexto = new Contexto();
-         
+
             try
             {
-                Lista = contexto.Personas.ToList();
+                Lista = contexto.Prestamos.ToList();
             }
+
             catch (Exception)
             {
                 throw;
             }
+
             finally
             {
                 contexto.Dispose();
             }
-
             return Lista;
         }
 
@@ -160,17 +218,18 @@ namespace PersonasBlazor1.BLL
 
             try
             {
-                encontrado = contexto.Personas.Any(e => e.PersonaId == id);
+                encontrado = contexto.Prestamos.Any(e => e.PrestamoId == id);
             }
+
             catch (Exception)
             {
                 throw;
             }
+
             finally
             {
                 contexto.Dispose();
             }
-
             return encontrado;
         }
     }

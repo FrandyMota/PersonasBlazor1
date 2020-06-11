@@ -65,6 +65,13 @@
                     <ValidationMessage For="@(() => Persona.FechaNacimiento)" />
                 </div>
 
+                @*Balance*@
+                <div class="form-group">
+                    <label>Balance</label>
+                    <InputNumber @bind-Value="Persona.Balance" class="form-control" readonly />
+                    <ValidationMessage For="@(() => Persona.Balance)" />
+                </div>
+
             </form>
         </div>
 
