@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200609035617_Migracion1.cs" />
+    <Compile Remove="Migrations\20200609035617_Migracion1.Designer.cs" />
+    <Compile Remove="Migrations\20200620211724_Migracion1.cs" />
+    <Compile Remove="Migrations\20200620211724_Migracion1.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.Toast" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Razor" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="3.1.4" />

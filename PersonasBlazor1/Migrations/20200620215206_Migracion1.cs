@@ -14,6 +14,20 @@ namespace PersonasBlazor1.Migrations
                 defaultValue: 0.0);
 
             migrationBuilder.CreateTable(
+                name: "Moras",
+                columns: table => new
+                {
+                    MoraId = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Fecha = table.Column<DateTime>(nullable: false),
+                    Total = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Moras", x => x.MoraId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Prestamos",
                 columns: table => new
                 {
@@ -36,6 +50,32 @@ namespace PersonasBlazor1.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MorasDetalle",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MoraId = table.Column<int>(nullable: false),
+                    PrestamoId = table.Column<int>(nullable: false),
+                    Valor = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MorasDetalle", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MorasDetalle_Moras_MoraId",
+                        column: x => x.MoraId,
+                        principalTable: "Moras",
+                        principalColumn: "MoraId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MorasDetalle_MoraId",
+                table: "MorasDetalle",
+                column: "MoraId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Prestamos_PersonaId",
                 table: "Prestamos",
@@ -45,7 +85,13 @@ namespace PersonasBlazor1.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "MorasDetalle");
+
+            migrationBuilder.DropTable(
                 name: "Prestamos");
+
+            migrationBuilder.DropTable(
+                name: "Moras");
 
             migrationBuilder.DropColumn(
                 name: "Balance",

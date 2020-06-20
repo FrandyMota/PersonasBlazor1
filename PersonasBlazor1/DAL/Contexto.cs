@@ -12,6 +12,7 @@ namespace PersonasBlazor1.DAL
         public DbSet<Personas> Personas { get; set; }
         public DbSet<Prestamos> Prestamos { get; set; }
 
+        public DbSet<Moras> Moras { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(@"Data Source= C:\RegistroPersonas\Personas.db");
